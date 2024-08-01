@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Leitura do arquivo CSV
-df = pd.read_csv("C:/Users/MASTER/OneDrive/Área de Trabalho/Alekyne/projeto integrador/Qualidade-de-Projeto-2/Datasets/arquivo_final.csv")
+df = pd.read_csv(r"C:\Users\Eduardo\Desktop\Projeto Integrador 2/arquivo_final.csv")
 
 # Exibir colunas e informações básicas
 print(df.columns)
