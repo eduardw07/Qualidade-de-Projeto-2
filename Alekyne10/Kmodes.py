@@ -4,14 +4,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Leitura do arquivo CSV
-df = pd.read_csv("C:/Users/MASTER/OneDrive/Área de Trabalho/Alekyne/projeto integrador/Qualidade-de-Projeto-2/Datasets/arquivo_final.csv")
+df = pd.read_csv(r"C:\Users\MASTER\OneDrive\Área de Trabalho\Alekyne\projeto integrador\arquivo_final.csv")
 
+
+print(df.isnull().sum())
+'''
 # Exibir colunas e informações básicas
 print(df.columns)
 print(df.isnull().sum())
 print(df.shape)
 print(df.info())
 print(df.value_counts())
+
 
 # Pré-processamento dos dados
 # Preenchendo valores nulos com uma string específica ou outra estratégia apropriada
@@ -62,3 +66,4 @@ plot_category_distribution(df, 'committer_name')
 plot_boxplot(df, 'in_main')
 plot_boxplot(df, 'is_merge')
 plot_boxplot(df, 'Engenheirado')
+'''
