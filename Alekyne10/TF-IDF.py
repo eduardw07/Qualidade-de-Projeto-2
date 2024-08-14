@@ -10,7 +10,7 @@ df = pd.read_csv(r"C:\Users\MASTER\OneDrive\Área de Trabalho\Alekyne\projeto in
 # substituir valores nulos para o valor acima
 df.fillna(method='ffill', inplace=True)
 
-X = df.drop('')
+X = df[['project_name', 'author_name', 'is_merge']]
 # Inicializa o vetor TF-IDF
 vectorizer = TfidfVectorizer()
 
