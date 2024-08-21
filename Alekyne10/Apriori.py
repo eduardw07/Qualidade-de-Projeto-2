@@ -9,24 +9,8 @@ df = pd.read_csv(r"C:\Users\MASTER\OneDrive\Área de Trabalho\Alekyne\projeto in
 df = df.drop(columns=['Unnamed: 0.1', 'Unnamed: 0'])
 # substituir valores nulos para o valor acima
 df.fillna(method='ffill', inplace=True)
-# Remover colunas desnecessárias
-# Verificar as primeiras linhas do dataset
-'''print(df.value_counts())
+pd.set_option('display.max_columns', None)
 
-# Resumo estatístico
-print("\n Descrição do Dataset \n", df.describe(), "\n")
-
-# Distribuição de classes (assumindo que a coluna 'classe' define se é bem ou mal relacionado)
-print(df['Engenheirado'].value_counts())
-
-# Verificando a % das classes
-# Total de instâncias
-total = df['Engenheirado'].value_counts().sum()
-
-# Percentual de cada classe
-percentual = df['Engenheirado'].value_counts(normalize=True) * 100
-print("\nA porcentagem da distribuição entre as classes é de: \n", percentual)
-'''
 
 
 # Selecionar colunas de interesse
@@ -51,6 +35,9 @@ rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
 # Visualizar as regras
 print(rules)
 print(frequent_itemsets)
+
+
+
 import matplotlib.pyplot as plt
 
 # Gráfico de Dispersão (Support vs Confidence)
@@ -81,8 +68,6 @@ plt.title('Top 10 Regras por Lift')
 plt.gca().invert_yaxis()
 plt.show()
 
-
-import seaborn as sns
 
 # Transformando Antecedents em String para Criar a Matriz
 rules['antecedents_str'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))

@@ -9,7 +9,7 @@ df = pd.read_csv(r"C:\Users\MASTER\OneDrive\Área de Trabalho\Alekyne\projeto in
 # substituir valores nulos para o valor acima
 df.fillna(method='ffill', inplace=True)
 
-
+print(df.value_counts())
 
 ### Grafico de barra e boxplot
 # Contar o número de commits por projeto

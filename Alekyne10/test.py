@@ -22,5 +22,4 @@ frequent_itemsets = apriori(df_encoded, min_support=0.01, use_colnames=True)
 rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
 
 # Exibir os conjuntos frequentes e as regras de associação
-print("Conjuntos Frequentes:\n", frequent_itemsets)
-print("\nRegras de Associação:\n", rules)
+print(df.value_counts())
