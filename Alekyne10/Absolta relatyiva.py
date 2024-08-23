@@ -1,50 +1,79 @@
-
 import pandas as pd
+from imblearn.over_sampling import RandomOverSampler
+from tabulate import tabulate
 
 # Leitura do arquivo CSV
 df = pd.read_csv(r"C:\Users\MASTER\OneDrive\Área de Trabalho\Alekyne\projeto integrador\Qualidade-de-Projeto-2\Datasets\arquivo_final1\arquivo_final.csv")
 
-# Substituir valores nulos para o valor acima
+# Substituir valores nulos pelo valor da linha anterior
 df.fillna(method='ffill', inplace=True)
 
+# Separando os dados e o rótulo que você deseja balancear
+X = df.drop(columns=['Engenheirado'])
+y = df['Engenheirado']
 
-print(df.value_counts())
+# Aplicando o oversampling
+oversampler = RandomOverSampler(random_state=42)
+X_resampled, y_resampled = oversampler.fit_resample(X, y)
 
-# Seleção das variáveis relevantes
-columns_of_interest = ['in_main', 'is_merge', 'Engenheirado']
+# Reconstruindo o DataFrame balanceado
+df_resampled = pd.concat([pd.DataFrame(X_resampled), pd.Series(y_resampled, name='Engenheirado')], axis=1)
+
+# Criar tabela de contingência entre as variáveis de interesse ('in_main', 'is_merge', 'Engenheirado')
+cross_tab_absolute = pd.crosstab(df_resampled['is_merge'], [df_resampled['in_main'], df_resampled['Engenheirado']])
+
+# Verifique o número de colunas geradas
+print("Número de colunas na crosstab:", cross_tab_absolute.shape[1])
+print("Colunas geradas:", cross_tab_absolute.columns)
+
+# Ajuste o renomeamento das colunas com base nas colunas reais geradas
+if cross_tab_absolute.shape[1] == 2:
+    cross_tab_absolute.columns = pd.MultiIndex.from_tuples([
+        ('isMain', 'Engenheirado'),
+        ('isMain', 'Não Engenheirado')
+    ])
+elif cross_tab_absolute.shape[1] == 4:
+    cross_tab_absolute.columns = pd.MultiIndex.from_tuples([
+        ('isMain', 'Engenheirado'),
+        ('isMain', 'Não Engenheirado'),
+        ('not isMain', 'Engenheirado'),
+        ('not isMain', 'Não Engenheirado')
+    ])
+
+# Exibir a tabela de contagem absoluta de forma organizada
+print("Contagem Absoluta:")
+print(tabulate(cross_tab_absolute, headers='keys', tablefmt='fancy_grid'))
+
+# Normalizando para obter a contagem relativa
+cross_tab_relative = cross_tab_absolute.div(cross_tab_absolute.sum().sum())
+
+# Exibir a tabela de contagem relativa de forma organizada
+print("\nContagem Relativa:")
+print(tabulate(cross_tab_relative, headers='keys', tablefmt='fancy_grid', floatfmt=".4f"))
 
 
-# Função para calcular a contagem relativa
-def relative_count(df, column):
-    count = df[column].value_counts()
-    relative_count = count / count.sum()
-    return relative_count
+import pandas as pd
+from scipy.stats import chi2_contingency
 
+# Considerando que já temos o DataFrame df_resampled
+# Criar a tabela de contingência entre 'Engenheirado' e 'is_merge'
+contingency_table = pd.crosstab(df_resampled['Engenheirado'], df_resampled['is_merge'])
 
-# Criação da tabela de contagem relativa para cada coluna
-relative_counts = {col: relative_count(df, col) for col in columns_of_interest}
+# Realizar o teste qui-quadrado
+chi2, p, dof, expected = chi2_contingency(contingency_table)
 
-# Transformando em DataFrame para melhor visualização
-relative_counts_df = pd.DataFrame(relative_counts)
+# Exibir os resultados
+print("Tabela de Contingência:")
+print(contingency_table)
+print("\nValores Esperados:")
+print(pd.DataFrame(expected, index=contingency_table.index, columns=contingency_table.columns))
+print(f"\nValor do Qui-Quadrado: {chi2:.4f}")
+print(f"p-valor: {p:.4f}")
+print(f"Graus de Liberdade: {dof}")
 
-# Exibindo a tabela de contagem relativa
-print(relative_counts_df)
-
-
-# Função para calcular a contagem absoluta
-def absolute_count(df, column):
-    return df[column].value_counts()
-
-# Criação da tabela de contagem absoluta para cada coluna
-absolute_counts = {col: absolute_count(df, col) for col in columns_of_interest}
-
-# Transformando em DataFrame para melhor visualização
-absolute_counts_df = pd.DataFrame(absolute_counts)
-
-# Exibindo a tabela de contagem absoluta
-print(absolute_counts_df)
-
-
-# Exemplo: Análise cruzada entre 'Engenheirado' e 'is_merge'
-cross_tab = pd.crosstab(df['Engenheirado'], df['is_merge'])
-print(cross_tab)
+# Verificando se rejeitamos ou não a hipótese nula
+alpha = 0.05
+if p < alpha:
+    print("\nResultado: Rejeitamos a hipótese nula (H0). Há uma associação significativa entre as variáveis 'Engenheirado' e 'is_merge'.")
+else:
+    print("\nResultado: Não rejeitamos a hipótese nula (H0). Não há evidências suficientes para afirmar que existe uma associação entre as variáveis 'Engenheirado' e 'is_merge'.")
