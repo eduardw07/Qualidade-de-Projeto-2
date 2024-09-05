@@ -10,6 +10,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
+from sklearn.model_selection import cross_val_score
+
 
 # Carregar o dataset
 df_bruto = pd.read_csv('../Datasets/arquivo_final.csv')
@@ -46,13 +48,13 @@ print("\nDataframe sem NA \n", df_limpo.isnull().sum())
 contagem_merges_por_classe = df_limpo[df_limpo['is_merge'] == 1].groupby('Engenheirado').size()
 
 # Visualizar o resultado
-"""plt.figure(figsize=(8, 6))
+plt.figure(figsize=(8, 6))
 sns.barplot(x=contagem_merges_por_classe.index, y=contagem_merges_por_classe.values, palette='viridis')
 plt.title('Contagem de Commits de Merge por Classe de Engenheirado')
 plt.xlabel('Classe de Engenheirado')
 plt.ylabel('Contagem de Commits de Merge')
 plt.xticks(ticks=[0, 1], labels=['Más Práticas (0)', 'Boas Práticas (1)'])
-plt.show()"""
+plt.show()
 
 # Análise de merges por projeto
 merge_by_project = df_limpo.groupby('project_name')['is_merge'].mean()
